@@ -1,0 +1,15 @@
+<head>
+    <meta charset="UTF-8">
+    <title>{{.PageTitle}}</title>
+    <link rel="stylesheet" href="styles/snippets.css">
+</head>
+<div class="container">
+  {{ range .Snippets }}
+  <div class="card">
+    <h3>{{ .Snippet }}</h3>
+    <p>{{ .Description }}</p>
+  </div>
+  {{ end }}
+
+  {{ .Template }}
+</div>

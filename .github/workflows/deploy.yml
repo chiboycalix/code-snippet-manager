@@ -21,7 +21,7 @@ jobs:
           echo 'export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}' >> ~/.bashrc
 
       - name: Build Docker image
-        run: docker build -t code-snippet-manager .
+        run: docker build -t snippet-manager .
 
       - name: Deploy to AWS EC2
         run: |

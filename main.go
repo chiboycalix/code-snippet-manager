@@ -79,7 +79,7 @@ func main() {
 	if port == "" {
 		port = "4000"
 	}
-	log.Fatal(app.Listen("0.0.0.0:" + port))
+	app.Listen(":" + port)
 }
 
 func indexHandler(c *fiber.Ctx) error {

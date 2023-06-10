@@ -34,7 +34,7 @@ func GetAllSnippets(c *fiber.Ctx) error {
 	}
 	return c.Render("index", fiber.Map{
 		"Snippets": snippets,
-		"Theme":    "androidstudio",
+		"Theme":    "monokai",
 	})
 }
 

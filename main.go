@@ -75,11 +75,11 @@ func main() {
 	app.Post("/snippets", saveSnippetHandler)
 
 	// Start the server
-	fmt.Println("Server started on http://localhost:4000")
+	fmt.Println("Server started on http://localhost:" + port)
 	if port == "" {
 		port = "4000"
 	}
-	app.Listen(":" + port)
+	log.Fatal(app.Listen(":" + port))
 }
 
 func indexHandler(c *fiber.Ctx) error {

@@ -12,7 +12,9 @@ jobs:
       with:
         host: ${{ secrets.HOST_DNS }}
         username: ${{ secrets.USERNAME }}
-        password: ''
         port: ${{ secrets.PORT }}
         source: "tests/a.txt,tests/b.txt"
-        target: your_server_target_folder_path
+        target: "/home/ec2-user/chiboy"
+        script: |
+          whoami
+          ls -al

@@ -14,8 +14,4 @@ jobs:
         username: ${{ secrets.USERNAME }}
         port: ${{ secrets.PORT }}
         key: ${{ secrets.EC2_SSH_KEY }}
-        source: "tests/a.txt,tests/b.txt"
-        target: "/home/ec2-user/chiboy"
-        script: |
-          whoami
-          ls -al
+        run: ls

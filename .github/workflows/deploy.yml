@@ -22,5 +22,6 @@ jobs:
         run: |
           echo "SSH Command: ssh -i ${{ secrets.EC2_SSH_KEY }} ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}"
           echo "Private Key Secret: ${{ secrets.EC2_SSH_KEY }}"
+          echo "Username Secret: ${{ secrets.USERNAME }}"
           ssh -i ${{ secrets.EC2_SSH_KEY }} ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}
           ./deploy.sh

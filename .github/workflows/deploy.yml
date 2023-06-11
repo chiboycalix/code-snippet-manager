@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Set secret
         run: |
-          gh secret set MY_SECRET secret.yml.gpg
+          gh secret set MY_SECRET -b "my secret value"
       - name: Deploy
         run: |
           echo $MY_SECRET

@@ -19,4 +19,7 @@ jobs:
           go-version: 1.16
 
       - name: Deploy to EC2
-        run: ssh -i ${{ secrets.EC2_SSH_KEY }} ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }} 'bash -s' < deploy.sh
+        run: |
+          echo "SSH Command: ssh -i ${{ secrets.EC2_SSH_KEY }} ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}
+          echo "Private Key Secret: ${{ secrets.EC2_SSH_KEY }}"
+          ssh -i ${{ secrets.EC2_SSH_KEY }} ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }} 'bash -s' < deploy.sh

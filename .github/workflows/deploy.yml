@@ -1,4 +1,4 @@
-name: Deploy to EC2
+name: Deploy
 
 on:
   push:
@@ -6,21 +6,55 @@ on:
       - main
 
 jobs:
-  deploy:
+  Deploy:
+    name: Deploy to EC2
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.16
-
-      - name: Deploy to EC2
+      - uses: actions/checkout@v2 
+      - name: Build & Deploy
+        env:
+            PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+            HOSTNAME: ${{secrets.HOST_DNS}}
+            USER_NAME: ${{secrets.USERNAME}}
+      
         run: |
-          echo "SSH Command: ssh -i ${{ secrets.EC2_SSH_KEY }} ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}"
-          echo "Private Key Secret: ${{ secrets.EC2_SSH_KEY }}"
-          ssh -i ${{ secrets.EC2_SSH_KEY }} ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}
-          ./deploy.sh
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+
+              # Now we have got the access of EC2 and we will start the deploy .
+              cd /home/ec2-user/projects/code-snippet-manager &&
+              git checkout dev &&
+              git fetch --all &&
+              git reset --hard origin/main &&
+              git pull origin main &&
+              go build -o code-snippet-manager &&
+              sudo docker start code-snippet-manager
+
+
+# name: Deploy to EC2
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v2
+
+#       - name: Set up Go
+#         uses: actions/setup-go@v2
+#         with:
+#           go-version: 1.16
+
+#       - name: Deploy to EC2
+#         run: |
+#           echo "SSH Command: ssh -i ${{ secrets.EC2_SSH_KEY }} ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}"
+#           echo "Private Key Secret: ${{ secrets.EC2_SSH_KEY }}"
+#           ssh -i ${{ secrets.EC2_SSH_KEY }} ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}
+#           ./deploy.sh

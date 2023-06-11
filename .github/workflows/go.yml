@@ -28,7 +28,7 @@ jobs:
     steps:
     - name: Deploy
       run: |
-        ssh -i ${{ secrets.EC2_SSH_KEY }} ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }} "cd /projects/code-snippet-manager && git pull"
+        ssh ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }} "cd /projects/code-snippet-manager && git pull"
         echo "Deploying the app"
         sudo docker build -t go-app .
         sudo docker run -d -p 8080:8080 go-app

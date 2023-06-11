@@ -1,17 +1,15 @@
-name: scp files
+name: remote ssh command
 on: [push]
 jobs:
 
   build:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
-    - uses: actions/checkout@v3
-    - name: copy file via ssh password
-      uses: appleboy/scp-action@v0.1.4
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@v0.1.10
       with:
         host: ${{ secrets.HOST_DNS }}
         username: ${{ secrets.USERNAME }}
         port: ${{ secrets.PORT }}
-        key: ${{ secrets.EC2_SSH_KEY }}
-        run: ls
+        script: whoami

@@ -1,26 +1,41 @@
-name: Deploy to EC2
-
+name: Deploy
 on:
   push:
     branches:
       - main
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.16
-
-      - name: Deploy to EC2
+      - uses: actions/checkout@v2
+      - name: SSH into remote server
         run: |
-          echo "SSH Command: ssh -i ${{ secrets.EC2_SSH_KEY }} ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}"
-          echo "Private Key Secret: ${{ secrets.EC2_SSH_KEY }}"
           ssh -i ${{ secrets.EC2_SSH_KEY }} ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}
-          ./deploy.sh
+
+
+# name: Deploy to EC2
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v2
+
+#       - name: Set up Go
+#         uses: actions/setup-go@v2
+#         with:
+#           go-version: 1.16
+
+#       - name: Deploy to EC2
+#         run: |
+#           echo "SSH Command: ssh -i ${{ secrets.EC2_SSH_KEY }} ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}"
+#           echo "Private Key Secret: ${{ secrets.EC2_SSH_KEY }}"
+#           ssh -i ${{ secrets.EC2_SSH_KEY }} ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}
+#           ./deploy.sh

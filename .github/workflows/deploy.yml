@@ -1,7 +1,7 @@
 on:
   push:
-    branches: [ main ]
-    paths: [ '**.go' ]
+    branches: 
+      - main
 
 jobs:
   deploy:

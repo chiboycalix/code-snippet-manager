@@ -28,11 +28,12 @@ jobs:
     steps:
     - name: Deploy
       run: |
-        ssh ec2-user@ec2-34-201-245-69.compute-1.amazonaws.com 
-        cd /projects/code-snippet-manager && git pull
-        echo "Deploying the app"
-        sudo docker build -t go-app .
-        sudo docker run -d -p 8080:8080 go-app
+        ssh -v ec2-user@ec2-34-201-245-69.compute-1.amazonaws.com
+        echo "Pulling the latest code"
+        # cd /projects/code-snippet-manager && git pull
+        # echo "Deploying the app"
+        # sudo docker build -t go-app .
+        # sudo docker run -d -p 8080:8080 go-app
     
 
 

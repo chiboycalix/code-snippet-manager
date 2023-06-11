@@ -1,23 +1,25 @@
-name: Deploy to EC2
-
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+    paths: [ '**.go' ]
 
 jobs:
   deploy:
-    runs-on: amazon-linux-2
-
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout the files
         uses: actions/checkout@v2
-
-      - name: Set up Go
+      - name: Install go on Amazon Linux 2
         uses: actions/setup-go@v2
         with:
-          go-version: 1.19
-
-      - name: Deploy to EC2
-        run: |
-          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ec2-user@34.201.245.69 'bash -s' < deploy.sh
+          go-version: '1.19'
+      - name: Build go server
+        run: go build -o server main.go
+      - name: Deploy to Server 1
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          REMOTE_HOST: ${{ secrets.HOST_DNS }}
+          REMOTE_USER: ${{ secrets.USERNAME }}
+          TARGET: ${{ secrets.TARGET_DIR }}

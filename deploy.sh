@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -x
 # Stop the existing Go server
 docker stop code-snippet-manager
 

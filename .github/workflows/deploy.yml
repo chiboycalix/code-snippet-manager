@@ -1,28 +1,23 @@
-name: Deploy
-
-on:
-  push:
-    branches:
-      - main
-
+name: build
+on: [push, pull_request]
 jobs:
-  Deploy:
-    name: Deploy to EC2
-    runs-on: ubuntu-latest
-    
+  build:
+    strategy:
+      matrix:
+        go-version: [1.14.x, 1.15.x]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+
     steps:
-      - uses: actions/checkout@v2 
-      - name: Build & Deploy
-        env:
-            PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-            HOSTNAME: ${{secrets.HOST_DNS}}
-            USER_NAME: ${{secrets.USERNAME}}
-      
-        run: |
-          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME}
-              cd /home/ec2-user/projects/code-snippet-manager &&
-              git pull origin main &&
-              go build -o main &&
-              sudo docker build -t code-snippet-manager . &&
-              sudo docker run -d -p 8080:8080 code-snippet-manager
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+
+      - name: Build
+        run: go build -v
+
+      - name: Test
+        run: go test -v ./...

@@ -37,6 +37,6 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 8080
-          source: "main"
+          source: "/home/ec2-user/projects/code-snippet-manager"
           target: "/home/ec2-user/projects/code-snippet-manager"
           strip_components: 1

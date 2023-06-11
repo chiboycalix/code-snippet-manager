@@ -8,9 +8,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: SSH into remote server
+      - name: Set secret
         run: |
-          ssh -i ${{ secrets.EC2_SSH_KEY }} ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}
+          gh secret set MY_SECRET secret.yml.gpg
+      - name: Deploy
+        run: |
+          echo $MY_SECRET
+
+
+# name: Deploy
+# on:
+#   push:
+#     branches:
+#       - main
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
+#       - name: SSH into remote server
+#         run: |
+#           ssh -i ${{ secrets.EC2_SSH_KEY }} ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}
 
 
 # name: Deploy to EC2

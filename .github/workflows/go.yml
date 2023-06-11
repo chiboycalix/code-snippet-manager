@@ -28,7 +28,7 @@ jobs:
     steps:
     - name: Deploy
       run: |
-        ssh -v ec2-user@ec2-34-201-245-69.compute-1.amazonaws.com
+        ssh -o StrictHostKeyChecking=no -T -v ec2-user@ec2-34-201-245-69.compute-1.amazonaws.com
         echo "Pulling the latest code"
         # cd /projects/code-snippet-manager && git pull
         # echo "Deploying the app"

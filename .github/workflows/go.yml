@@ -28,7 +28,8 @@ jobs:
     steps:
     - name: Deploy
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }} "cd /projects/code-snippet-manager && git pull"
+        ssh ec2-user@ec2-34-201-245-69.compute-1.amazonaws.com 
+        cd /projects/code-snippet-manager && git pull
         echo "Deploying the app"
         sudo docker build -t go-app .
         sudo docker run -d -p 8080:8080 go-app

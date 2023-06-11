@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Stop the existing Go server
-systemctl stop code-snippet-manager
+docker stop code-snippet-manager
 
 # Navigate to your Go server directory
-cd /projects/code-snippet-manager
+cd "$(dirname "$0")"
 
 # Pull the latest changes from the GitHub repository
 git pull
@@ -13,4 +13,4 @@ git pull
 go build
 
 # Restart the Go server
-systemctl start /projects/code-snippet-manager
+docker start code-snippet-manager

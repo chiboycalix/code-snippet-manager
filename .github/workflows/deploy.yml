@@ -17,4 +17,4 @@ jobs:
       - name: Build go server
         run: go build -o server main.go
       - name: Deploy to Server 1
-        run: rsync -avz -e "ssh -i ${{ secrets.EC2_SSH_KEY }}" ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}:${{ secrets.TARGET_DIR }}
+        run: rsync -avz -e "ssh -i ${{ secrets.EC2_SSH_KEY }}" server ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}:${{ secrets.TARGET_DIR }}

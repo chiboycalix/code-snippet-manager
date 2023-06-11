@@ -22,32 +22,5 @@ jobs:
         run: |
           echo "SSH Command: ssh -i ${{ secrets.EC2_SSH_KEY }} ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}"
           echo "Private Key Secret: ${{ secrets.EC2_SSH_KEY }}"
-          echo "Username Secret: ec2-user"
-          ssh -i -----BEGIN RSA PRIVATE KEY-----
-            MIIEowIBAAKCAQEAhd8z94D8TMV0WU0TxqnptB4pRCKB76cT34b+divCngenT/WM
-            oaNg9vHyzg4bMsJS1yzVEnEJc0NcgGnbTssIV8cx//ZO5/KjltNzVIyeYimKrILu
-            FsFVeNAeqfE9PL5jDm/96jLLdA3ijji49l6Cdnii/TykJPvPJtKkNT6PwHPm9xqA
-            1o71beOB5xr6uYQ0tBwqaqiNZf+GV8J9TZLjXU/Y8J8hZZhgx9h6NZfXqbU/Zvhq
-            n5m3tu5r9HvLRKyRdfOvrhc8mk/SIOj8SFh94z9e32FG2ep1QWzvadyAjts9LWC6
-            lJTVl6cxEVLYAEy6XRg/D9HipW6D9gDcethATwIDAQABAoIBAA7MnwUUiE/AYF1i
-            7PXAYOqdjvhOTEj/Em5akRTlP42S0QdA4PwZgKWsF6h53L3ex6Or/B4eyumoH7i+
-            exUZ0uFJTxi51P1FUJpi49QL+5Jkf0UU8FcpplZFw64L0jY94dt9u/dBCEbbJhmM
-            4b2ysv9/1JzkME06XSswjCCqut+OhpY8NcIPgogDaIZOBpcO9pdcxNDEk/VjNWiK
-            18CGn1aWcz4c7zAo5TctvIgrHvviPuGXCokZPaBwjNaxbelKiRBLlrQfwOwZk21J
-            ceidi4SFtUbX7gL+t2mEnuR5m6fBodOuHeTd2ggS9ckM155KGN8O95Gys0/pkdj0
-            aZYDuZkCgYEA6AiNGZDpwjaGtPtgEjGNek5s9yBwX+QLR/mWsPbY7BpII7dlVqjb
-            KmDaLPEkZF1/GZ9Z+Cs7jYpZD/fdDnCik8LEt0I/BPM2T8/yC4S0F5mrJDK25h41
-            Q7/cn8QZ896CSvGg7IclbLA/EsW9tB4/BCEpt/URlIGD5NCufomzI80CgYEAk7MO
-            Tf+IIk7Koxg7frxqkVOmpJ/tdFreM7SgUlmuao00hLBnStuMS8b20jMvP76C3hdo
-            T1Ow7ag2nfvDN448uBi2X4C2FRm+QZaCAtFxKNaFblmEAm1zdNiFcuh9UwJ9kVWm
-            zY7yJt2woVDlXJcwebxO+CbuoPF2cxmm8GyzEIsCgYAPUAknx8V1eK25IeG8MaL5
-            kFVmlbB005LfBByqvw+fvThHiyHX7zrPeCbN0ngpW3Y41ahVVV0PwTKReDURb+N6
-            xt6+jVOlWvuZlsqNcguEhzKhJ+ukEhhHyVChBosD6gpFMd8B3QVeP99ZuM0FJv3X
-            ouyi5DxtxYJTxmXNmf7FfQKBgBg+Kpno2GpxLleI0bMisAc8iLy6t1oC1Df+bNY3
-            fCZnGPiyj7G8yZFijf7Agf/fgFF93BQxM3g+xQA3Y7qJsTOycrTIRpq+B/lx/9MA
-            l6dRVsNfFAjl+C50n6rVuERYw02IloFk9iAlASnpQkxpUH6axwd6NG7cU0nfKwSJ
-            gvazAoGBAKaa5UjGMI1NcaxnOd9fszEHo4OGw/Ufj/A/4bBdq8yMgZRNvAEh9nqD
-            5t68SOT6zzczEdun+yX+FhwKRa6DACz67bknTSeFdQj9KJOlqjqrLjBoIwb65xai
-            GfxiXLDn3npQXs0n39CBw4np0X3B1NyUneZ5HwFVEqzg3ziIMXBC
-            -----END RSA PRIVATE KEY----- ec2-user@ec2-34-201-245-69.compute-1.amazonaws.com
+          ssh -i ${{ secrets.EC2_SSH_KEY }} ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}
           ./deploy.sh

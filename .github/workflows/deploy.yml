@@ -1,20 +1,23 @@
+name: Deploy to EC2
+
 on:
   push:
-    branches: 
+    branches:
       - main
 
 jobs:
   deploy:
-    name: Deploy to EC2
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout the files
+      - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Install go on Amazon Linux 2
+
+      - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: '1.17'
-      - name: Build go server
-        run: go build -o server main.go
-      - name: Deploy to Server 1
-        run: rsync -avz -e "ssh -i ${{ secrets.EC2_SSH_KEY }}" server ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}:${{ secrets.TARGET_DIR }}
+          go-version: 1.16
+
+      - name: Deploy to EC2
+        run: |
+          ssh -i ${{ secrets.EC2_SSH_KEY }} ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }} 'bash -s' < deploy.sh

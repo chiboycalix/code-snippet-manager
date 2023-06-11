@@ -14,6 +14,9 @@ jobs:
       - name: Deploy
         run: |
           echo $MY_SECRET
+env:
+  GH_TOKEN: ${{ github.token }}
+        
 
 
 # name: Deploy

@@ -1,5 +1,2 @@
 .env
 tmp
-secrets.yml
-github-actions
-github-actions.pub

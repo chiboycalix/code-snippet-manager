@@ -8,6 +8,7 @@
       href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/{{.Theme }}.min.css"
     />
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="styles/index.css" />
     <style>
       pre code.hljs {
@@ -23,7 +24,7 @@
     <div class="container">
       <h1 class="title">Code Snippet Manager</h1>
       <button id="openModalBtn">Create Snippet</button>
-
+      <!-- <div class="toast"></div> -->
       <div id="myModal" class="modal">
         <div class="modal-content">
           <span class="close-icon">&times;</span>
@@ -69,9 +70,15 @@
         <div class="snippetsWrapper">
           {{range .Snippets}}
           <div class="snippet">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <p class="language">{{ .Language }}</p>
+              <div>
+                <i class="fa-solid fa-pen-to-square"></i>
+                <i class="fa-solid fa-trash"></i>
+                <i class="fa-solid fa-copy" onclick="handleCopy(event)"></i>
+              </div>
+            </div>
             <pre><code class="language-{{ .Language }} custom-snippet">
-<p class="language">{{ .Language }}</p>
-
 {{.Snippet}}
           </code></pre>
           </div>
@@ -83,5 +90,19 @@
       hljs.highlightAll();
     </script>
     <script src="js/index.js"></script>
+    <script>
+      function handleCopy(event){
+        const text = event.currentTarget.parentNode.parentNode.parentNode.querySelector('.custom-snippet').innerText;
+        navigator.clipboard.writeText(text);
+        // show toast
+        const toast = document.createElement('div');
+        toast.classList.add('toast');
+        toast.innerText = 'Copied to clipboard';
+        document.body.appendChild(toast);
+        setTimeout(() => {
+          toast.remove();
+        }, 10000);
+      };
+    </script>
   </body>
 </html>

@@ -59,3 +59,14 @@ h2 {
 .form-group input[type="submit"]:hover {
   background-color: #06b874;
 }
+
+
+.login-link {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.login-link a {
+  color: #ffffff;
+  text-decoration: underline;
+}

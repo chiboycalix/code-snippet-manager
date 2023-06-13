@@ -9,4 +9,5 @@ import (
 func SnippetRoute(app *fiber.App) {
 	app.Get("/", handlers.GetAllSnippets)
 	app.Post("/snippets", handlers.CreateSnippet)
+	app.Post("/snippets/:id", handlers.DeleteSnippet)
 }

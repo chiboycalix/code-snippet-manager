@@ -1,0 +1,33 @@
+.container {
+  width: 1400px;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+nav{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.right-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+ul {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  list-style: none;
+  margin-right: 20px;
+}
+li {
+  margin-left: 20px;
+}
+a {
+  text-decoration: none;
+  color: #e6e6e6;
+}
+.fa-right-from-bracket{
+  color: #f21818;
+}

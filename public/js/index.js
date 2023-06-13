@@ -66,3 +66,32 @@ function check_tab(element, event) {
     update(element.value);
   }
 }
+
+// copy snippet to clipboard
+function handleCopy(event){
+  const text = event.currentTarget.parentNode.parentNode.parentNode.querySelector('.custom-snippet').innerText;
+  navigator.clipboard.writeText(text);
+  // show toast
+  const toast = document.createElement('div');
+  toast.classList.add('toast');
+  toast.innerText = 'Copied to clipboard!!!';
+  document.body.appendChild(toast);
+  setTimeout(() => {
+    toast.remove();
+  }, 1000);
+};
+
+
+function handleDelete(event){
+  const snippetId = event.currentTarget.dataset.snippetid
+  fetch(`/snippets/${snippetId}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+  }).then((res) => {
+    if (res.ok) {
+      window.location.reload();
+    }
+  });
+}

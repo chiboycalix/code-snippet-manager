@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -52,6 +53,18 @@ func CreateSnippet(c *fiber.Ctx) error {
 	_, err := snippetCollection.InsertOne(context.Background(), snippet)
 	if err != nil {
 		return fiber.NewError(http.StatusInternalServerError, "Failed to save snippet")
+	}
+
+	return c.Redirect("/")
+}
+
+// delete snippet
+func DeleteSnippet(c *fiber.Ctx) error {
+	id := c.Params("id")
+	fmt.Println(id, "id")
+	_, err := snippetCollection.DeleteOne(context.Background(), bson.M{"_id": "6484b84369c8e83815afed6e"})
+	if err != nil {
+		return fiber.NewError(http.StatusInternalServerError, "Failed to delete snippet")
 	}
 
 	return c.Redirect("/")

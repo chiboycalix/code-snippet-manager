@@ -286,7 +286,6 @@ code {
   height: 250px;
   overflow: hidden !important;
   font-size: 12px;
-  padding: 1em !important;
   position: relative;
   z-index: 0;
 }

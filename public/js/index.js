@@ -95,3 +95,6 @@ function handleDelete(event){
     }
   });
 }
+function onDelete(event){
+  console.log('hi')
+}

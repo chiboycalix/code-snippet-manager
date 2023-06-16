@@ -3,8 +3,9 @@ package handlers
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
+	"regexp"
+	"time"
 
 	"github.com/chiboycalix/code-snippet-manager/configs"
 	"github.com/chiboycalix/code-snippet-manager/models"
@@ -17,21 +18,23 @@ import (
 var snippetCollection *mongo.Collection = configs.GetCollection(configs.DB, "snippets")
 
 func GetAllSnippets(c *fiber.Ctx) error {
-	cursor, err := snippetCollection.Find(context.Background(), bson.D{{}})
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer cursor.Close(context.Background())
-
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	var snippets []models.Snippet
+	defer cancel()
 
-	for cursor.Next(context.Background()) {
-		var snippet models.Snippet
-		err := cursor.Decode(&snippet)
-		if err != nil {
-			log.Fatal(err)
+	results, err := snippetCollection.Find(ctx, bson.M{})
+	if err != nil {
+		fiber.NewError(http.StatusBadGateway, "StatusBadGateway")
+	}
+
+	// reading from the db
+	defer results.Close(ctx)
+	for results.Next(ctx) {
+		var singleSnippet models.Snippet
+		if err := results.Decode(&singleSnippet); err != nil {
+			fiber.NewError(http.StatusBadGateway, "StatusBadGateway")
 		}
-		snippets = append(snippets, snippet)
+		snippets = append(snippets, singleSnippet)
 	}
 	return c.Render("index", fiber.Map{
 		"Snippets": snippets,
@@ -62,13 +65,12 @@ func CreateSnippet(c *fiber.Ctx) error {
 func DeleteSnippet(c *fiber.Ctx) error {
 	// Get the todo ID from the URL parameter
 	idParam := c.Params("id")
-
-	snippetId, _ := primitive.ObjectIDFromHex(idParam)
-	res, err := snippetCollection.DeleteOne(context.Background(), bson.M{"id": snippetId})
+	match := regexp.MustCompile(`ObjectID\(%22(.*?)%22\)`).FindStringSubmatch(idParam)
+	snippetId, _ := primitive.ObjectIDFromHex(match[1])
+	_, err := snippetCollection.DeleteOne(context.Background(), bson.M{"_id": snippetId})
 	fmt.Println(err, "err")
 	if err != nil {
 		return fiber.NewError(http.StatusBadRequest, "Failed to delete snippetss")
 	}
-	fmt.Println(res, "res")
 	return c.Redirect("/")
 }

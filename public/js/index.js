@@ -1,4 +1,3 @@
-
 const modal = document.getElementById("myModal");
 
 const openModalBtn = document.getElementById("openModalBtn");
@@ -55,10 +54,7 @@ function check_tab(element, event) {
   if (event.key == "Tab") {
     event.preventDefault();
     let before_tab = code.slice(0, element.selectionStart);
-    let after_tab = code.slice(
-      element.selectionEnd,
-      element.value.length
-    );
+    let after_tab = code.slice(element.selectionEnd, element.value.length);
     let cursor_pos = element.selectionStart + 1;
     element.value = before_tab + "\t" + after_tab;
     element.selectionStart = cursor_pos;
@@ -68,30 +64,33 @@ function check_tab(element, event) {
 }
 
 // copy snippet to clipboard
-function handleCopy(event){
-  const text = event.currentTarget.parentNode.parentNode.parentNode.querySelector('.custom-snippet').innerText;
+function handleCopy(event) {
+  const text =
+    event.currentTarget.parentNode.parentNode.parentNode.querySelector(
+      ".custom-snippet"
+    ).innerText;
   navigator.clipboard.writeText(text);
   // show toast
-  const toast = document.createElement('div');
-  toast.classList.add('toast');
-  toast.innerText = 'Copied to clipboard!!!';
+  const toast = document.createElement("div");
+  toast.classList.add("toast");
+  toast.innerText = "Copied to clipboard!!!";
   document.body.appendChild(toast);
   setTimeout(() => {
     toast.remove();
   }, 1000);
-};
+}
 
-
-function handleDelete(event){
-  event.preventDefault();
-  const snippetId = event.currentTarget.dataset.snippetid
-  fetch(`/snippets/${snippetId}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  }).then((res) => {
-    console.log(res, 'resonse');
-  });
-
+function handleDelete(event) {
+  const snippetId = event.currentTarget.dataset.snippetid;
+  const snippet = event.currentTarget.parentNode.parentNode.parentNode;
+  const url = `/snippets/${snippetId}`;
+  fetch(url, {
+    method: "POST",
+  })
+    .then((response) => {
+      if (response.status === 200) {
+        snippet.remove();
+      }
+    })
+    .then((data) => {});
 }

@@ -63,7 +63,6 @@ func CreateSnippet(c *fiber.Ctx) error {
 
 // delete snippet
 func DeleteSnippet(c *fiber.Ctx) error {
-	// Get the todo ID from the URL parameter
 	idParam := c.Params("id")
 	match := regexp.MustCompile(`ObjectID\(%22(.*?)%22\)`).FindStringSubmatch(idParam)
 	snippetId, _ := primitive.ObjectIDFromHex(match[1])

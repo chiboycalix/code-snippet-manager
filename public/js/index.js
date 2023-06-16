@@ -80,10 +80,44 @@ function handleCopy(event) {
   }, 1000);
 }
 
+
+
+function deleteSnippet(event) {
+  const swalWithCustomButtons = Swal.mixin({
+    customClass: {
+      confirmButton: 'confirmButton',
+      cancelButton: 'cancelButton'
+    },
+    buttonsStyling: false
+  })
+
+  swalWithCustomButtons.fire({
+    title: 'Are you sure?',
+    showCancelButton: true,
+    confirmButtonText: 'Delete',
+    background: '#1a1a1a',
+    color: '#fff',
+    showClass: {
+      popup: 'animate__animated animate__fadeInDown'
+    },
+    hideClass: {
+      popup: 'animate__animated animate__fadeOutUp'
+    }
+  }).then((result) => {
+    if (result.isConfirmed) {
+      handleDelete(event)
+    } else {
+      // do nothing
+    }
+  })
+
+}
+
 function handleDelete(event) {
-  const snippetId = event.currentTarget.dataset.snippetid;
-  const snippet = event.currentTarget.parentNode.parentNode.parentNode;
+  const snippetId = event.target.dataset.snippetid;
+  const snippet = event.target.parentNode.parentNode.parentNode;
   const url = `/snippets/${snippetId}`;
+
   fetch(url, {
     method: "POST",
   })

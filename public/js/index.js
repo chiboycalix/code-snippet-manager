@@ -97,12 +97,13 @@ function deleteSnippet(event) {
     confirmButtonText: 'Delete',
     background: '#1a1a1a',
     color: '#fff',
-    showClass: {
-      popup: 'animate__animated animate__fadeInDown'
-    },
-    hideClass: {
-      popup: 'animate__animated animate__fadeOutUp'
-    }
+    padding: '5rem 1rem',
+    // showClass: {
+    //   popup: 'animate__animated animate__fadeInDown'
+    // },
+    // hideClass: {
+    //   popup: 'animate__animated animate__fadeOutUp'
+    // }
   }).then((result) => {
     if (result.isConfirmed) {
       handleDelete(event)

@@ -110,7 +110,7 @@ button#submit {
   transition: color 0.3s ease;
 }
 .close-icon:hover {
-  color: #f00;
+  color: #06b874;
 }
 
 .language {

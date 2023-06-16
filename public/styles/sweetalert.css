@@ -1,11 +1,11 @@
 .confirmButton{
-  background-color: #1ab394;
+  background-color: #06b874;
   border: none;
   outline: none;
   margin-right: 1rem;
 }
 .confirmButton:hover{
-  background-color: #18a689;
+  background-color: #06b874;
 }
 .cancelButton{
   background-color: rgb(141, 140, 140);

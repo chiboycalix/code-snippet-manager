@@ -83,18 +83,15 @@ function handleCopy(event){
 
 
 function handleDelete(event){
+  event.preventDefault();
   const snippetId = event.currentTarget.dataset.snippetid
   fetch(`/snippets/${snippetId}`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     },
   }).then((res) => {
-    if (res.ok) {
-      window.location.reload();
-    }
+    console.log(res, 'resonse');
   });
-}
-function onDelete(event){
-  console.log('hi')
+
 }

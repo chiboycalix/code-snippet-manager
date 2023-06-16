@@ -50,7 +50,7 @@
               <p class="language">{{ .Language }}</p>
               <div>
                 <i class="fa-solid fa-pen-to-square"></i>
-                <i class="fa-solid fa-trash" data-snippetid="{{ .ID }}" onclick="onDelete(event)"></i>
+                <i class="fa-solid fa-trash" data-snippetid="{{ .ID }}" onclick="handleDelete(event)"></i>
                 <i class="fa-solid fa-copy" onclick="handleCopy(event)"></i>
               </div>
               <!-- <div class="snippet-description" id="snippet-description">

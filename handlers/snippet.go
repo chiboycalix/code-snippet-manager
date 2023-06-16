@@ -8,9 +8,9 @@ import (
 
 	"github.com/chiboycalix/code-snippet-manager/configs"
 	"github.com/chiboycalix/code-snippet-manager/models"
-
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -60,12 +60,15 @@ func CreateSnippet(c *fiber.Ctx) error {
 
 // delete snippet
 func DeleteSnippet(c *fiber.Ctx) error {
-	id := c.Params("id")
-	fmt.Println(id, "id")
-	_, err := snippetCollection.DeleteOne(context.Background(), bson.M{"_id": "6484b84369c8e83815afed6e"})
-	if err != nil {
-		return fiber.NewError(http.StatusInternalServerError, "Failed to delete snippet")
-	}
+	// Get the todo ID from the URL parameter
+	idParam := c.Params("id")
 
+	snippetId, _ := primitive.ObjectIDFromHex(idParam)
+	res, err := snippetCollection.DeleteOne(context.Background(), bson.M{"id": snippetId})
+	fmt.Println(err, "err")
+	if err != nil {
+		return fiber.NewError(http.StatusBadRequest, "Failed to delete snippetss")
+	}
+	fmt.Println(res, "res")
 	return c.Redirect("/")
 }

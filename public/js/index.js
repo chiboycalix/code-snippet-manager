@@ -66,7 +66,7 @@ function check_tab(element, event) {
 // copy snippet to clipboard
 function handleCopy(event) {
   const text =
-    event.currentTarget.parentNode.parentNode.parentNode.querySelector(
+    event.target.parentNode.parentNode.parentNode.querySelector(
       ".custom-snippet"
     ).innerText;
   navigator.clipboard.writeText(text);

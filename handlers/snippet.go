@@ -3,13 +3,12 @@ package handlers
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"regexp"
-	"strings"
 	"time"
 
 	"github.com/chiboycalix/code-snippet-manager/configs"
 	"github.com/chiboycalix/code-snippet-manager/models"
+	"github.com/chiboycalix/code-snippet-manager/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt"
 	"go.mongodb.org/mongo-driver/bson"
@@ -25,25 +24,23 @@ type MyCustomClaims struct {
 }
 
 func GetAllSnippets(c *fiber.Ctx) error {
-	headers := c.GetReqHeaders()
-	authHeader := strings.Split(headers["Authorization"], "Bearer")
-	token := authHeader[1]
-	tokenSecret := configs.EnvJWTSecret()
-	newToken, err := jwt.ParseWithClaims(
-		token,
-		&MyCustomClaims{},
-		func(token *jwt.Token) (interface{}, error) {
-			return []byte(tokenSecret), nil
-		})
+	authorization := c.Get("Authorization")
 
-	fmt.Println(newToken, "newToken")
-	if err != nil {
-		fmt.Println(err)
+	// Check if the header value is present and in the expected format
+	if authorization == "" || len(authorization) < 7 || authorization[:7] != "Bearer " {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "Invalid or missing authorization header",
+		})
 	}
-	claims, ok := newToken.Claims.(*MyCustomClaims)
-	fmt.Println(claims, "claims")
-	if !ok {
-		return fiber.NewError(http.StatusBadGateway, "Couldn't parse claims")
+
+	// Extract the token value
+	token := authorization[7:]
+	err := utils.ValidateToken(token)
+	fmt.Println(err, "err")
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "Invalid or expired JWT",
+		})
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -52,7 +49,9 @@ func GetAllSnippets(c *fiber.Ctx) error {
 
 	results, err := snippetCollection.Find(ctx, bson.M{})
 	if err != nil {
-		fiber.NewError(http.StatusBadGateway, "StatusBadGateway")
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Couldn't find any snippets",
+		})
 	}
 
 	// reading from the db
@@ -60,7 +59,9 @@ func GetAllSnippets(c *fiber.Ctx) error {
 	for results.Next(ctx) {
 		var singleSnippet models.Snippet
 		if err := results.Decode(&singleSnippet); err != nil {
-			fiber.NewError(http.StatusBadGateway, "StatusBadGateway")
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"message": "Couldn't find any snippets",
+			})
 		}
 		snippets = append(snippets, singleSnippet)
 	}
@@ -74,16 +75,22 @@ func GetAllSnippets(c *fiber.Ctx) error {
 func CreateSnippet(c *fiber.Ctx) error {
 	snippet := new(models.Snippet)
 	if err := c.BodyParser(snippet); err != nil {
-		return fiber.NewError(http.StatusBadRequest, "Invalid request")
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Couldn't create snippet",
+		})
 	}
 
 	if snippet.Description == "" || snippet.Snippet == "" {
-		return fiber.NewError(http.StatusBadRequest, "Name and code are required")
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Description and snippet are required",
+		})
 	}
 
 	_, err := snippetCollection.InsertOne(context.Background(), snippet)
 	if err != nil {
-		return fiber.NewError(http.StatusInternalServerError, "Failed to save snippet")
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Couldn't create snippet",
+		})
 	}
 
 	return c.Redirect("/")
@@ -97,7 +104,9 @@ func DeleteSnippet(c *fiber.Ctx) error {
 	_, err := snippetCollection.DeleteOne(context.Background(), bson.M{"_id": snippetId})
 	fmt.Println(err, "err")
 	if err != nil {
-		return fiber.NewError(http.StatusBadRequest, "Failed to delete snippetss")
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Couldn't delete snippet",
+		})
 	}
 	return c.Redirect("/")
 }

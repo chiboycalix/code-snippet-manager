@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/chiboycalix/code-snippet-manager/configs"
 	"github.com/chiboycalix/code-snippet-manager/models"
@@ -18,20 +17,28 @@ var userCollection *mongo.Collection = configs.GetCollection(configs.DB, "users"
 func RegisterUser(c *fiber.Ctx) error {
 	user := new(models.User)
 	if err := c.BodyParser(user); err != nil {
-		return fiber.NewError(http.StatusBadRequest, "Invalid request")
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request",
+		})
 	}
 
 	if user.Email == "" || user.Password == "" || user.Username == "" {
-		return fiber.NewError(http.StatusBadRequest, "Email, Username and Password are required")
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Email, Password and Username are required",
+		})
 	}
 	pass, hashErr := utils.HashPassword(user.Password)
 	if hashErr != nil {
-		return fiber.NewError(http.StatusInternalServerError, "Failed to hash password")
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to hash password",
+		})
 	}
 	user.Password = pass
 	_, err := userCollection.InsertOne(context.Background(), user)
 	if err != nil {
-		return fiber.NewError(http.StatusInternalServerError, "Failed to save user")
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to create user",
+		})
 	}
 
 	return c.Redirect("/")

@@ -2,7 +2,6 @@ package utils
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -22,7 +21,7 @@ func CheckPasswordHash(hashed, password string) error {
 }
 
 type JWTClaim struct {
-	Email string `json:"email,omitempty" validate:"required"`
+	Email string `json:"email"`
 	jwt.StandardClaims
 }
 
@@ -30,18 +29,16 @@ func GenerateJWT(email string) (string, error) {
 	claims := &JWTClaim{
 		Email: email,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Hour * 24 * 7).Unix(),
+			ExpiresAt: time.Now().Add(24 * time.Hour).Unix(),
 		},
 	}
 	tokenSecret := configs.EnvJWTSecret()
-	fmt.Println(tokenSecret, "tokenSecret")
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(tokenSecret))
 }
 
 func ValidateToken(signedToken string) (err error) {
 	tokenSecret := configs.EnvJWTSecret()
-	fmt.Println(tokenSecret, "tokenSecret")
 	token, err := jwt.ParseWithClaims(
 		signedToken,
 		&JWTClaim{},
@@ -55,7 +52,6 @@ func ValidateToken(signedToken string) (err error) {
 	}
 
 	claims, ok := token.Claims.(*JWTClaim)
-	fmt.Println(claims, "claims")
 	if !ok {
 		fiber.NewError(http.StatusBadGateway, "Couldn't parse claims")
 		return
@@ -65,7 +61,5 @@ func ValidateToken(signedToken string) (err error) {
 		err = errors.New("token expired")
 		return
 	}
-
 	return
-
 }

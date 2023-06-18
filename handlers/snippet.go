@@ -36,7 +36,6 @@ func GetAllSnippets(c *fiber.Ctx) error {
 	// Extract the token value
 	token := authorization[7:]
 	err := utils.ValidateToken(token)
-	fmt.Println(err, "err")
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "Invalid or expired JWT",

@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"net/http"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/chiboycalix/code-snippet-manager/configs"
 	"github.com/chiboycalix/code-snippet-manager/models"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -17,7 +19,33 @@ import (
 
 var snippetCollection *mongo.Collection = configs.GetCollection(configs.DB, "snippets")
 
+type MyCustomClaims struct {
+	Email string `json:"email"`
+	jwt.StandardClaims
+}
+
 func GetAllSnippets(c *fiber.Ctx) error {
+	headers := c.GetReqHeaders()
+	authHeader := strings.Split(headers["Authorization"], "Bearer")
+	token := authHeader[1]
+	tokenSecret := configs.EnvJWTSecret()
+	newToken, err := jwt.ParseWithClaims(
+		token,
+		&MyCustomClaims{},
+		func(token *jwt.Token) (interface{}, error) {
+			return []byte(tokenSecret), nil
+		})
+
+	fmt.Println(newToken, "newToken")
+	if err != nil {
+		fmt.Println(err)
+	}
+	claims, ok := newToken.Claims.(*MyCustomClaims)
+	fmt.Println(claims, "claims")
+	if !ok {
+		return fiber.NewError(http.StatusBadGateway, "Couldn't parse claims")
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	var snippets []models.Snippet
 	defer cancel()

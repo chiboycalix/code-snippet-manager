@@ -2,15 +2,14 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/chiboycalix/code-snippet-manager/configs"
 	"github.com/chiboycalix/code-snippet-manager/models"
 	"github.com/chiboycalix/code-snippet-manager/utils"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -39,35 +38,54 @@ func RegisterUser(c *fiber.Ctx) error {
 }
 
 func LoginUser(c *fiber.Ctx) error {
-	user := new(models.User)
-	_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	if err := c.BodyParser(user); err != nil {
-		return fiber.NewError(http.StatusBadRequest, "Invalid request")
+	type loginRequest struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
 	}
-	fmt.Println(user.Email)
-	fmt.Println(user.Password)
+
+	var user loginRequest
+
+	if err := c.BodyParser(&user); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request",
+		})
+	}
 	if user.Email == "" || user.Password == "" {
-		return fiber.NewError(http.StatusBadRequest, "Email and Password are required")
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Email and Password are required",
+		})
 	}
 
 	var result models.User
 	err := userCollection.FindOne(context.Background(), bson.M{"email": user.Email}).Decode(&result)
 	if err != nil {
-		return fiber.NewError(http.StatusNotFound, "Failed to logins")
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Failed to login",
+		})
 	}
 
 	if err := utils.CheckPasswordHash(result.Password, user.Password); err != nil {
-		return fiber.NewError(http.StatusBadRequest, "Failed to login")
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid credentials",
+		})
 	}
 
 	jwt, err := utils.GenerateJWT(result.Email)
 	if err != nil {
-		return fiber.NewError(http.StatusInternalServerError, "Failed to generate JWT token")
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to generate jwt",
+		})
 	}
-	fmt.Println(jwt)
 
-	return c.Redirect("/")
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Login successful",
+		"token":   jwt,
+		"user": struct {
+			ID       primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
+			Email    string             `json:"email"`
+			Username string             `json:"username"`
+		}{Email: result.Email, Username: result.Username, ID: result.ID},
+	})
 }
 
 func LogoutUser(c *fiber.Ctx) error {

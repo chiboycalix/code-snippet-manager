@@ -80,8 +80,6 @@ function handleCopy(event) {
   }, 1000);
 }
 
-
-
 function deleteSnippet(event) {
   const swalWithCustomButtons = Swal.mixin({
     customClass: {

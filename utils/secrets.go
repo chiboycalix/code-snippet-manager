@@ -1,6 +1,9 @@
 package utils
 
 import (
+	"time"
+
+	"github.com/chiboycalix/code-snippet-manager/configs"
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -14,11 +17,19 @@ func CheckPasswordHash(hashed, password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashed), []byte(password))
 }
 
-func GenerateJWT(email string) (string, error) {
-	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"email": email,
-	})
+type UserClaims struct {
+	Email string `json:"email"`
+	jwt.StandardClaims
+}
 
-	token, err := claims.SignedString([]byte("secret"))
-	return token, err
+func GenerateJWT(email string) (string, error) {
+	claims := UserClaims{
+		Email: email,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: time.Now().Add(time.Hour * 24 * 7).Unix(),
+		},
+	}
+	tokenSecret := configs.EnvJWTSecret()
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString([]byte(tokenSecret))
 }

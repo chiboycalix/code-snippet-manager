@@ -3,14 +3,12 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/chiboycalix/code-snippet-manager/configs"
 	"github.com/chiboycalix/code-snippet-manager/routes"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/template/html"
-	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -24,19 +22,13 @@ func main() {
 
 	app.Use(cors.New())
 	app.Static("/", "./public", fiber.Static{})
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
 	// database connection
 	configs.ConnectDatabase()
-
-	// routes
-	routes.SnippetRoute(app)
 	routes.UserRoute(app)
+	routes.SnippetRoute(app)
 
-	port := os.Getenv("PORT")
+	// server port
+	port := configs.EnvPort()
 
 	fmt.Println("Server started on http://localhost:" + port)
 	if port == "" {

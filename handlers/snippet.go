@@ -10,7 +10,6 @@ import (
 	"github.com/chiboycalix/code-snippet-manager/models"
 	"github.com/chiboycalix/code-snippet-manager/utils"
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -18,9 +17,8 @@ import (
 
 var snippetCollection *mongo.Collection = configs.GetCollection(configs.DB, "snippets")
 
-type MyCustomClaims struct {
-	Email string `json:"email"`
-	jwt.StandardClaims
+type ViewData struct {
+	Token string
 }
 
 func GetAllSnippets(c *fiber.Ctx) error {
@@ -64,9 +62,11 @@ func GetAllSnippets(c *fiber.Ctx) error {
 		}
 		snippets = append(snippets, singleSnippet)
 	}
+
 	return c.Render("index", fiber.Map{
 		"Snippets": snippets,
 		"Theme":    "monokai",
+		"data":     ViewData{Token: token},
 		// "Theme": "sunburst",
 	})
 }

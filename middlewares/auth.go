@@ -11,9 +11,7 @@ func JWTMiddleware() fiber.Handler {
 		if token == "" {
 			authHeader := c.Get("Authorization")
 			if authHeader == "" {
-				return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-					"message": "Unauthorized",
-				})
+				return c.Redirect("/login")
 			}
 			token = authHeader[7:] // Remove "Bearer " from the beginning
 		}

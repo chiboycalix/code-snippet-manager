@@ -69,47 +69,56 @@ function handleCopy(event) {
     event.target.parentNode.parentNode.parentNode.querySelector(
       ".custom-snippet"
     ).innerText;
-  navigator.clipboard.writeText(text);
-  // show toast
-  const toast = document.createElement("div");
-  toast.classList.add("toast");
-  toast.innerText = "Copied to clipboard!!!";
-  document.body.appendChild(toast);
-  setTimeout(() => {
-    toast.remove();
-  }, 1000);
+
+  if (typeof navigator !== "undefined" && navigator.clipboard) {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        // show toast
+        const toast = document.createElement("div");
+        toast.classList.add("toast");
+        toast.innerText = "Copied to clipboard!!!";
+        document.body.appendChild(toast);
+        setTimeout(() => {
+          toast.remove();
+        }, 1000);
+      })
+      .catch((error) => {
+        console.log(error);
+        console.log(navigator, "navigator")
+      });
+  } else {
+    // Clipboard API not supported, implement alternative approach
+    console.log("Clipboard API not supported");
+    console.log(navigator.clipboard, "navigator")
+  }
 }
 
 function deleteSnippet(event) {
   const swalWithCustomButtons = Swal.mixin({
     customClass: {
-      confirmButton: 'confirmButton',
-      cancelButton: 'cancelButton'
+      confirmButton: "confirmButton",
+      cancelButton: "cancelButton",
     },
-    buttonsStyling: false
-  })
+    buttonsStyling: false,
+  });
 
-  swalWithCustomButtons.fire({
-    title: 'Are you sure?',
-    showCancelButton: true,
-    confirmButtonText: 'Delete',
-    background: '#1a1a1a',
-    color: '#fff',
-    padding: '5rem 1rem',
-    // showClass: {
-    //   popup: 'animate__animated animate__fadeInDown'
-    // },
-    // hideClass: {
-    //   popup: 'animate__animated animate__fadeOutUp'
-    // }
-  }).then((result) => {
-    if (result.isConfirmed) {
-      handleDelete(event)
-    } else {
-      // do nothing
-    }
-  })
-
+  swalWithCustomButtons
+    .fire({
+      title: "Are you sure?",
+      showCancelButton: true,
+      confirmButtonText: "Delete",
+      background: "#1a1a1a",
+      color: "#fff",
+      padding: "5rem 1rem",
+    })
+    .then((result) => {
+      if (result.isConfirmed) {
+        handleDelete(event);
+      } else {
+        // do nothing
+      }
+    });
 }
 
 function handleDelete(event) {

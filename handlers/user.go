@@ -8,7 +8,6 @@ import (
 	"github.com/chiboycalix/code-snippet-manager/utils"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -77,22 +76,19 @@ func LoginUser(c *fiber.Ctx) error {
 		})
 	}
 
-	jwt, err := utils.GenerateJWT(result.Email)
+	jwt, err := utils.GenerateJWT(result.ID.Hex())
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Failed to generate jwt",
 		})
 	}
-
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "Login successful",
-		"token":   jwt,
-		"user": struct {
-			ID       primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
-			Email    string             `json:"email"`
-			Username string             `json:"username"`
-		}{Email: result.Email, Username: result.Username, ID: result.ID},
+	c.Cookie(&fiber.Cookie{
+		Name:     "jwt",
+		Value:    jwt,
+		Secure:   true,
+		HTTPOnly: true,
 	})
+	return c.Redirect("/")
 }
 
 func LogoutUser(c *fiber.Ctx) error {
@@ -105,4 +101,10 @@ func LoginUserPage(c *fiber.Ctx) error {
 
 func RegisterUserPage(c *fiber.Ctx) error {
 	return c.Render("register", fiber.Map{})
+}
+
+func SubmitLoginPage(c *fiber.Ctx) error {
+	return c.Render("login", fiber.Map{
+		"message": "Login successful",
+	})
 }

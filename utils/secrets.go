@@ -21,13 +21,13 @@ func CheckPasswordHash(hashed, password string) error {
 }
 
 type JWTClaim struct {
-	Email string `json:"email"`
+	ID string `json:"_id"`
 	jwt.StandardClaims
 }
 
-func GenerateJWT(email string) (string, error) {
+func GenerateJWT(id string) (string, error) {
 	claims := &JWTClaim{
-		Email: email,
+		ID: id,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(24 * time.Hour).Unix(),
 		},
@@ -37,7 +37,7 @@ func GenerateJWT(email string) (string, error) {
 	return token.SignedString([]byte(tokenSecret))
 }
 
-func ValidateToken(signedToken string) (err error) {
+func ValidateToken(signedToken string) (err error, claims *JWTClaim) {
 	tokenSecret := configs.EnvJWTSecret()
 	token, err := jwt.ParseWithClaims(
 		signedToken,
@@ -61,5 +61,5 @@ func ValidateToken(signedToken string) (err error) {
 		err = errors.New("token expired")
 		return
 	}
-	return
+	return nil, claims
 }

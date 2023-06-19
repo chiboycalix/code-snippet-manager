@@ -15,7 +15,6 @@ function handleLogout(){
 }
 
 function onLogin(event){
-  console.log('onLogin')
   fetch('/auth/login', {
     method: 'POST',
     headers: {
@@ -32,7 +31,8 @@ function onLogin(event){
       alert(data.error)
     } else {
       localStorage.setItem('codeSnippetManagerJWT', data.token)
-      window.location.replace('/')
+      // window.location.replace('/')
+      document.getElementById('login-form').submit()
     }
   }).catch((err) => {
     console.log(err)

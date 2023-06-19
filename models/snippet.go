@@ -7,5 +7,6 @@ type Snippet struct {
 	Snippet     string             `json:"snippet,omitempty" validate:"required"`
 	Language    string             `json:"language,omitempty" validate:"required"`
 	Title       string             `json:"title,omitempty" validate:"required"`
+	Owner       primitive.ObjectID `json:"owner" bson:"owner,omitempty" validate:"required"`
 	Description string             `json:"description,omitempty" validate:"required"`
 }

@@ -22,35 +22,22 @@ type ViewData struct {
 }
 
 func GetAllSnippets(c *fiber.Ctx) error {
-	authorization := c.Get("Authorization")
-
-	// Check if the header value is present and in the expected format
-	if authorization == "" || len(authorization) < 7 || authorization[:7] != "Bearer " {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"message": "Invalid or missing authorization header",
-		})
-	}
-
-	// Extract the token value
-	token := authorization[7:]
-	err := utils.ValidateToken(token)
-	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"message": "Invalid or expired JWT",
-		})
-	}
+	cookie := c.Cookies("jwt")
+	_, claims := utils.ValidateToken(cookie)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	var snippets []models.Snippet
 	defer cancel()
 
-	results, err := snippetCollection.Find(ctx, bson.M{})
+	ownerId, _ := primitive.ObjectIDFromHex(claims.ID)
+	filter := bson.M{"owner": ownerId}
+	results, err := snippetCollection.Find(ctx, filter)
+
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Couldn't find any snippets",
 		})
 	}
-
 	// reading from the db
 	defer results.Close(ctx)
 	for results.Next(ctx) {
@@ -66,12 +53,13 @@ func GetAllSnippets(c *fiber.Ctx) error {
 	return c.Render("index", fiber.Map{
 		"Snippets": snippets,
 		"Theme":    "monokai",
-		"data":     ViewData{Token: token},
-		// "Theme": "sunburst",
 	})
 }
 
 func CreateSnippet(c *fiber.Ctx) error {
+	cookie := c.Cookies("jwt")
+	_, claims := utils.ValidateToken(cookie)
+	fmt.Println(claims.ID)
 	snippet := new(models.Snippet)
 	if err := c.BodyParser(snippet); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -84,7 +72,7 @@ func CreateSnippet(c *fiber.Ctx) error {
 			"message": "Description and snippet are required",
 		})
 	}
-
+	snippet.Owner, _ = primitive.ObjectIDFromHex(claims.ID)
 	_, err := snippetCollection.InsertOne(context.Background(), snippet)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

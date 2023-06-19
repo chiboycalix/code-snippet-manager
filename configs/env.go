@@ -30,3 +30,11 @@ func EnvJWTSecret() string {
 	}
 	return os.Getenv("JWT_SECRET")
 }
+
+func GetEnv() string {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	return os.Getenv("APP_ENV")
+}

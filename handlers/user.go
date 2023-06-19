@@ -50,9 +50,10 @@ func RegisterUser(c *fiber.Ctx) error {
 	c.Cookie(&fiber.Cookie{
 		Name:     "codeSnippetManagerJWT",
 		Value:    jwt,
-		Secure:   false,
 		HTTPOnly: false,
-		SameSite: "None",
+		SameSite: "Lax",
+		Domain:   "34.201.245.69",
+		Path:     "/", // This is required for the cookie to be sent to the server
 	})
 	return c.Redirect("/")
 }
@@ -96,12 +97,20 @@ func LoginUser(c *fiber.Ctx) error {
 			"error": "Failed to generate jwt",
 		})
 	}
+	env := configs.GetEnv()
+	domain := ""
+	if env == "production" {
+		domain = "34.201.245.69"
+	} else {
+		domain = "localhost"
+	}
 	c.Cookie(&fiber.Cookie{
 		Name:     "codeSnippetManagerJWT",
 		Value:    jwt,
-		Secure:   false,
 		HTTPOnly: false,
-		SameSite: "None",
+		SameSite: "Lax",
+		Domain:   domain,
+		Path:     "/", // This is required for the cookie to be sent to the server
 	})
 	return c.Redirect("/")
 }

@@ -11,5 +11,4 @@ func UserRoute(app *fiber.App) {
 	app.Get("/auth/logout", handlers.LogoutUser)
 	app.Get("/login", handlers.LoginUserPage)
 	app.Get("/register", handlers.RegisterUserPage)
-	// app.Get("/submit-login", handlers.SubmitLoginPage)
 }

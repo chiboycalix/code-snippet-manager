@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/chiboycalix/code-snippet-manager/configs"
 	"github.com/chiboycalix/code-snippet-manager/models"
@@ -39,7 +40,12 @@ func RegisterUser(c *fiber.Ctx) error {
 			"error": "Failed to create user",
 		})
 	}
-
+	errr := userCollection.FindOne(context.Background(), bson.M{"email": user.Email}).Decode(&user)
+	if errr != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Failed to login",
+		})
+	}
 	jwt, err := utils.GenerateJWT(user.ID.Hex())
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -47,14 +53,7 @@ func RegisterUser(c *fiber.Ctx) error {
 		})
 	}
 
-	c.Cookie(&fiber.Cookie{
-		Name:     "codeSnippetManagerJWT",
-		Value:    jwt,
-		HTTPOnly: false,
-		SameSite: "Lax",
-		Domain:   "34.201.245.69",
-		Path:     "/", // This is required for the cookie to be sent to the server
-	})
+	utils.SetCookies(jwt, c)
 	return c.Redirect("/")
 }
 
@@ -97,25 +96,12 @@ func LoginUser(c *fiber.Ctx) error {
 			"error": "Failed to generate jwt",
 		})
 	}
-	env := configs.GetEnv()
-	domain := ""
-	if env == "production" {
-		domain = "34.201.245.69"
-	} else {
-		domain = "localhost"
-	}
-	c.Cookie(&fiber.Cookie{
-		Name:     "codeSnippetManagerJWT",
-		Value:    jwt,
-		HTTPOnly: false,
-		SameSite: "Lax",
-		Domain:   domain,
-		Path:     "/", // This is required for the cookie to be sent to the server
-	})
+	utils.SetCookies(jwt, c)
 	return c.Redirect("/")
 }
 
 func LogoutUser(c *fiber.Ctx) error {
+	fmt.Println("Logout")
 	c.ClearCookie("codeSnippetManagerJWT")
 	return c.Render("login", fiber.Map{})
 }

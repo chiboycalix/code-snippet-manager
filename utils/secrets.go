@@ -74,3 +74,22 @@ func GetUserIDFromToken(cookie string) (string, error) {
 	}
 	return claims.ID, nil
 }
+
+func SetCookies(jwt string, c *fiber.Ctx) {
+	env := configs.GetEnv()
+	domain := ""
+	if env == "production" {
+		domain = "34.201.245.69"
+	} else {
+		domain = "localhost"
+	}
+
+	c.Cookie(&fiber.Cookie{
+		Name:     "codeSnippetManagerJWT",
+		Value:    jwt,
+		HTTPOnly: false,
+		SameSite: "Lax",
+		Domain:   domain,
+		Path:     "/",
+	})
+}

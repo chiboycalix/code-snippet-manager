@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/chiboycalix/code-snippet-manager/configs"
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
 )

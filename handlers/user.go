@@ -50,8 +50,9 @@ func RegisterUser(c *fiber.Ctx) error {
 	c.Cookie(&fiber.Cookie{
 		Name:     "codeSnippetManagerJWT",
 		Value:    jwt,
-		Secure:   true,
-		HTTPOnly: true,
+		Secure:   false,
+		HTTPOnly: false,
+		SameSite: "None",
 	})
 	return c.Redirect("/")
 }
@@ -98,8 +99,9 @@ func LoginUser(c *fiber.Ctx) error {
 	c.Cookie(&fiber.Cookie{
 		Name:     "codeSnippetManagerJWT",
 		Value:    jwt,
-		Secure:   true,
-		HTTPOnly: true,
+		Secure:   false,
+		HTTPOnly: false,
+		SameSite: "None",
 	})
 	return c.Redirect("/")
 }

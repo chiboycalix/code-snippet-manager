@@ -22,14 +22,13 @@ type ViewData struct {
 }
 
 func GetAllSnippets(c *fiber.Ctx) error {
-	cookie := c.Cookies("jwt")
-	_, claims := utils.ValidateToken(cookie)
+	_id, _ := utils.GetUserIDFromToken(c.Cookies("codeSnippetManagerJWT"))
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	var snippets []models.Snippet
 	defer cancel()
 
-	ownerId, _ := primitive.ObjectIDFromHex(claims.ID)
+	ownerId, _ := primitive.ObjectIDFromHex(_id)
 	filter := bson.M{"owner": ownerId}
 	results, err := snippetCollection.Find(ctx, filter)
 
@@ -57,9 +56,7 @@ func GetAllSnippets(c *fiber.Ctx) error {
 }
 
 func CreateSnippet(c *fiber.Ctx) error {
-	cookie := c.Cookies("jwt")
-	_, claims := utils.ValidateToken(cookie)
-	fmt.Println(claims.ID)
+	_id, _ := utils.GetUserIDFromToken(c.Cookies("codeSnippetManagerJWT"))
 	snippet := new(models.Snippet)
 	if err := c.BodyParser(snippet); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -72,7 +69,7 @@ func CreateSnippet(c *fiber.Ctx) error {
 			"message": "Description and snippet are required",
 		})
 	}
-	snippet.Owner, _ = primitive.ObjectIDFromHex(claims.ID)
+	snippet.Owner, _ = primitive.ObjectIDFromHex(_id)
 	_, err := snippetCollection.InsertOne(context.Background(), snippet)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

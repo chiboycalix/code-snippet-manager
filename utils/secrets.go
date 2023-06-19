@@ -11,6 +11,11 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type JWTClaim struct {
+	ID string `json:"_id"`
+	jwt.StandardClaims
+}
+
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	return string(bytes), err
@@ -18,11 +23,6 @@ func HashPassword(password string) (string, error) {
 
 func CheckPasswordHash(hashed, password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashed), []byte(password))
-}
-
-type JWTClaim struct {
-	ID string `json:"_id"`
-	jwt.StandardClaims
 }
 
 func GenerateJWT(id string) (string, error) {
@@ -62,4 +62,15 @@ func ValidateToken(signedToken string) (err error, claims *JWTClaim) {
 		return
 	}
 	return nil, claims
+}
+
+func GetUserIDFromToken(cookie string) (string, error) {
+	if cookie == "" {
+		return "", errors.New("unauthenticated")
+	}
+	err, claims := ValidateToken(cookie)
+	if err != nil {
+		return "", errors.New("unauthenticated")
+	}
+	return claims.ID, nil
 }

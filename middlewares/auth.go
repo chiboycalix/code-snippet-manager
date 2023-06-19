@@ -7,7 +7,7 @@ import (
 func JWTMiddleware() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		// Get the token from the cookies or headers
-		token := c.Cookies("jwt")
+		token := c.Cookies("codeSnippetManagerJWT")
 		if token == "" {
 			authHeader := c.Get("Authorization")
 			if authHeader == "" {

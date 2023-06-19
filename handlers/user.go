@@ -40,6 +40,19 @@ func RegisterUser(c *fiber.Ctx) error {
 		})
 	}
 
+	jwt, err := utils.GenerateJWT(user.ID.Hex())
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to generate jwt",
+		})
+	}
+
+	c.Cookie(&fiber.Cookie{
+		Name:     "codeSnippetManagerJWT",
+		Value:    jwt,
+		Secure:   true,
+		HTTPOnly: true,
+	})
 	return c.Redirect("/")
 }
 
@@ -83,7 +96,7 @@ func LoginUser(c *fiber.Ctx) error {
 		})
 	}
 	c.Cookie(&fiber.Cookie{
-		Name:     "jwt",
+		Name:     "codeSnippetManagerJWT",
 		Value:    jwt,
 		Secure:   true,
 		HTTPOnly: true,
@@ -92,6 +105,7 @@ func LoginUser(c *fiber.Ctx) error {
 }
 
 func LogoutUser(c *fiber.Ctx) error {
+	c.ClearCookie("codeSnippetManagerJWT")
 	return c.Render("login", fiber.Map{})
 }
 

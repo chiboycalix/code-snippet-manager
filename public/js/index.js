@@ -1,36 +1,62 @@
-const modal = document.getElementById("myModal");
+const createSnippetModal = document.getElementById("createSnippetModal");
+const updateSnippetModal = document.getElementById("updateSnippetModal");
 
-const openModalBtn = document.getElementById("openModalBtn");
+const openCreateSnippetModal = document.getElementById(
+  "openCreateSnippetModalBtn"
+);
+const openUpdateSnippetModal = document.getElementsByClassName(
+  "fa-pen-to-square"
+);
+const createSnippetCloseModalIcon = document.querySelector(
+  ".create-snippet-close-icon"
+);
+const updateSnippetCloseModalIcon = document.querySelector(
+  ".update-snippet-close-icon"
+);
 
-const closeIcon = document.querySelector(".close-icon");
+for (let i = 0; i < openUpdateSnippetModal.length; i++) {
+  openUpdateSnippetModal[i].addEventListener("click", function (event) {
+    console.log(event.currentTarget, "hii")
+    updateSnippetModal.style.display = "block";
+    onSelectLanguage();
+  });
+}
 
-openModalBtn.addEventListener("click", function () {
-  modal.style.display = "block";
-  onSelectLanguage();
+createSnippetCloseModalIcon.addEventListener("click", function () {
+  closeCreateSnippetModal();
 });
 
-function closeModal() {
-  modal.style.display = "none";
+updateSnippetCloseModalIcon.addEventListener("click", function () {
+  closeUpdateSnippetModal();
+});
+
+function closeCreateSnippetModal() {
+  createSnippetModal.style.display = "none";
 }
+
+function closeUpdateSnippetModal() {
+  updateSnippetModal.style.display = "none";
+}
+
+window.addEventListener("click", function (event) {
+  if (event.target === createSnippetModal) {
+    closeCreateSnippetModal();
+  }
+});
+
+window.addEventListener("click", function (event) {
+  if (event.target === updateSnippetModal) {
+    closeUpdateSnippetModal();
+  }
+});
 
 function onSelectLanguage() {
   var selectElement = document.getElementById("language");
-  var selectedValue =
-    selectElement.options[selectElement.selectedIndex].value || "html";
+  var selectedValue = selectElement.options[selectElement.selectedIndex].value || "html";
   let result_element = document.querySelector("#highlighting-content");
   result_element.className = "language-" + selectedValue;
   update(document.getElementById("editing").value);
 }
-
-closeIcon.addEventListener("click", function () {
-  closeModal();
-});
-
-window.addEventListener("click", function (event) {
-  if (event.target === modal) {
-    closeModal();
-  }
-});
 
 function update(text) {
   let result_element = document.querySelector("#highlighting-content");
@@ -63,7 +89,6 @@ function check_tab(element, event) {
   }
 }
 
-// copy snippet to clipboard
 function handleCopy(event) {
   const text =
     event.target.parentNode.parentNode.parentNode.querySelector(
@@ -85,12 +110,12 @@ function handleCopy(event) {
       })
       .catch((error) => {
         console.log(error);
-        console.log(navigator, "navigator")
+        console.log(navigator, "navigator");
       });
   } else {
     // Clipboard API not supported, implement alternative approach
     console.log("Clipboard API not supported");
-    console.log(navigator.clipboard, "navigator")
+    console.log(navigator.clipboard, "navigator");
   }
 }
 
@@ -132,6 +157,64 @@ function handleDelete(event) {
     .then((response) => {
       if (response.status === 200) {
         snippet.remove();
+      }
+    })
+    .then((data) => {});
+}
+
+function handleEdit(event) {
+  const snippetId = event.target.dataset.snippetid;
+  const url = `/snippets/${snippetId}`;
+
+  fetch(url, {
+    method: "PUT",
+  })
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json();
+      }
+    })
+    .then((data) => {
+      const { title, language, code } = data;
+      const titleInput = document.querySelector("#title");
+      const languageInput = document.querySelector("#language");
+      const codeInput = document.querySelector("#editing");
+      const submitButton = document.querySelector("#submit-button");
+
+      titleInput.value = title;
+      languageInput.value = language;
+      codeInput.value = code;
+      submitButton.innerText = "Update";
+      submitButton.dataset.snippetid = snippetId;
+      modal.style.display = "block";
+      onSelectLanguage();
+    });
+}
+
+function handleUpdate(event) {
+  const snippetId = event.target.dataset.snippetid;
+  const url = `/snippets/${snippetId}`;
+
+  const title = document.querySelector("#title").value;
+  const language = document.querySelector("#language").value;
+  const code = document.querySelector("#editing").value;
+
+  const data = {
+    title,
+    language,
+    code,
+  };
+
+  fetch(url, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  })
+    .then((response) => {
+      if (response.status === 200) {
+        window.location.reload();
       }
     })
     .then((data) => {});

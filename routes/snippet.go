@@ -11,4 +11,5 @@ func SnippetRoute(app *fiber.App) {
 	app.Get("/", middlewares.JWTMiddleware(), handlers.GetAllSnippets)
 	app.Post("/snippets", middlewares.JWTMiddleware(), handlers.CreateSnippet)
 	app.Post("/snippets/:id", handlers.DeleteSnippet)
+	app.Put("/snippets/:id", handlers.UpdateSnippet)
 }

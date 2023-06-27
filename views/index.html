@@ -9,10 +9,10 @@
 <body>
   {{ template "header" .}}
     <div class="container">
-      <button id="openModalBtn">Create Snippet</button>
-      <div id="myModal" class="modal">
+      <button id="openCreateSnippetModalBtn">Create Snippet</button>
+      <div id="createSnippetModal" class="modal">
         <div class="modal-content">
-          <span class="close-icon">&times;</span>
+          <span class="create-snippet-close-icon">&times;</span>
           <form method="POST" action="/snippets">
             <select id="language" name="language" onchange="onSelectLanguage()">
               <option value="">Select language</option>
@@ -51,6 +51,9 @@
           </form>
         </div>
       </div>
+
+
+
       <div class="snippetContainer">
         <div class="snippetsWrapper">
           {{range .Snippets}}
@@ -58,7 +61,7 @@
             <div class="snippet-header">
               <p class="language">{{ .Language }}</p>
               <div>
-                <i class="fa-solid fa-pen-to-square"></i>
+                <i class="fa-solid fa-pen-to-square" data-snippetid="{{ .ID }}" id="openUpdateSnippetModalBtn"></i>
                 <i class="fa-solid fa-trash" data-snippetid="{{ .ID }}" onclick="deleteSnippet(event)"></i>
                 <i class="fa-solid fa-copy" data-snippetid="{{ .ID }}" onclick="handleCopy(event)"></i>
               </div>
@@ -66,10 +69,54 @@
                 {{ .Description }}
               </div> -->
             </div>
+
             
             <pre><code class="language-{{ .Language }} custom-snippet">
 {{.Snippet}}
           </code></pre>
+          
+          </div>
+          <div id="updateSnippetModal" class="modal">
+            <div class="modal-content">
+              <span class="update-snippet-close-icon">&times;</span>
+              <form method="POST" action="/snippets">
+                <select id="language" name="language" onchange="onSelectLanguage()" id="updateLanguage">
+                  <option value="">Select language</option>
+                  <option value="html">HTML</option>
+                  <option value="css">CSS</option>
+                  <option value="javascript">Javascript</option>
+                  <option value="php">PHP</option>
+                  <option value="ruby">Ruby</option>
+                  <option value="go">Go</option>
+                  <option value="rust">Rust</option>
+                  <option value="java">Java</option>
+                </select>
+                <textarea
+                  placeholder="Describe your snippet"
+                  id="description"
+                  rows="4"
+                  name="description"
+                  value="{{ .Description }}"
+                ></textarea>
+    
+                <div class="editorWrapper">
+                  <textarea
+                    name="snippet"
+                    placeholder="Enter Source Code"
+                    id="editing"
+                    spellcheck="false"
+                    oninput="update(this.value); sync_scroll(this);"
+                    onscroll="sync_scroll(this);"
+                    onkeydown="check_tab(this, event);"
+                  ></textarea>
+                  <pre id="highlighting" aria-hidden="true">
+          <code class="language-" id="highlighting-content">
+            </code>
+            </pre>
+                </div>
+                <button type="submit" id="submit">Submit</button>
+              </form>
+            </div>
           </div>
           {{end}}
         </div>

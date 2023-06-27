@@ -94,3 +94,24 @@ func DeleteSnippet(c *fiber.Ctx) error {
 	}
 	return c.Redirect("/")
 }
+
+func UpdateSnippet(c *fiber.Ctx) error {
+	idParam := c.Params("id")
+	match := regexp.MustCompile(`ObjectID\(%22(.*?)%22\)`).FindStringSubmatch(idParam)
+	snippetId, _ := primitive.ObjectIDFromHex(match[1])
+	snippet := new(models.Snippet)
+	if err := c.BodyParser(snippet); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Couldn't update snippet",
+		})
+	}
+
+	_, err := snippetCollection.UpdateOne(context.Background(), bson.M{"_id": snippetId}, bson.M{"$set": snippet})
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Couldn't update snippet",
+		})
+	}
+
+	return c.Redirect("/")
+}

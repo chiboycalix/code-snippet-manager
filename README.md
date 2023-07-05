@@ -21,23 +21,25 @@ The Code Snippet Manager is a utility app designed to help developers organize a
 ## Getting Started
 To get started with the **Code Snippet Manager**, follow these steps:
 
-Clone the repository: git clone https://github.com/chiboycalix/code-snippet-manager.git
-Install the dependencies: **go mod tidy**
-Configure the authentication mechanism based on your requirements.
-Build and run the application: **make run**
-Access the app in your browser at **http://localhost:4000**
-Technologies Used
-Programming Languages: Go, JavaScript, HTML, CSS
-Frameworks: Go Fiber
-Database: MongoDB
-Contributing
+> - Clone the repository: git clone https://github.com/chiboycalix/code-snippet-manager.git
+> - Install the dependencies: **go mod tidy**
+> - Configure the authentication mechanism based on your requirements.
+> - Build and run the application: **make run**
+> - Access the app in your browser at **http://localhost:4000**
+
+**Technologies Used**
+> - Programming Languages: Go, JavaScript, HTML, CSS
+> - Frameworks: Go Fiber
+> - Database: MongoDB
+  
+**Contributing**
 Contributions are welcome! If you want to contribute to the Code Snippet Manager, follow these steps:
 
 **Fork the repository.**
-Create a new branch: **`git checkout -b feature/your-feature`**
-Commit your changes: **`git commit -m 'Add some feature'`**
-Push to the branch: **`git push origin feature/your-feature`**
-Submit a pull request.
+> - Create a new branch: **`git checkout -b feature/your-feature`**
+> - Commit your changes: **`git commit -m 'Add some feature'`**
+> - Push to the branch: **`git push origin feature/your-feature`**
+> - Submit a pull request.
 
 **License**
 This project is licensed under the MIT License. Feel free to use and modify the code for your own purposes.

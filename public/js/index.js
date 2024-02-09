@@ -21,14 +21,16 @@ for (let i = 0; i < openUpdateSnippetModal.length; i++) {
     onSelectLanguage();
   });
 }
-
+openCreateSnippetModal.addEventListener('click', () => {
+  createSnippetModal.style.display = 'block';
+})
 createSnippetCloseModalIcon.addEventListener("click", function () {
   closeCreateSnippetModal();
 });
 
-updateSnippetCloseModalIcon.addEventListener("click", function () {
-  closeUpdateSnippetModal();
-});
+// updateSnippetCloseModalIcon?.addEventListener("click", function () {
+//   closeUpdateSnippetModal();
+// });
 
 function closeCreateSnippetModal() {
   createSnippetModal.style.display = "none";
